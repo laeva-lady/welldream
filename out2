@@ -1,0 +1,18 @@
+/home/alice
+2025/06/15 15:50:13 INFO date date=2025-06-15
+2025/06/15 15:50:13 INFO line_str line_str=vesktop,00:00:31
+2025/06/15 15:50:13 INFO line parts="[vesktop 00:00:31]"
+2025/06/15 15:50:13 INFO line_str line_str=steam,00:00:29
+2025/06/15 15:50:13 INFO line parts="[steam 00:00:29]"
+2025/06/15 15:50:13 INFO line_str line_str=code,00:00:27
+2025/06/15 15:50:13 INFO line parts="[code 00:00:27]"
+2025/06/15 15:50:13 INFO line_str line_str=cursor,00:00:26
+2025/06/15 15:50:13 INFO line parts="[cursor 00:00:26]"
+2025/06/15 15:50:13 INFO line_str line_str=zen,00:09:25
+2025/06/15 15:50:13 INFO line parts="[zen 00:09:25]"
+2025/06/15 15:50:13 INFO line_str line_str=com.mitchellh.ghostty,00:09:25
+2025/06/15 15:50:13 INFO line parts="[com.mitchellh.ghostty 00:09:25]"
+2025/06/15 15:50:13 INFO line_str line_str=Spotify,00:00:16
+2025/06/15 15:50:13 INFO line parts="[Spotify 00:00:16]"
+2025/06/15 15:50:13 INFO line_str line_str=""
+2025/06/15 15:50:13 INFO line parts=[]

@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"welldream/src/debug"
 )
 
 func GetActiveWindows() []string {
@@ -15,9 +16,10 @@ func GetActiveWindows() []string {
 	}
 
 	output, err := exec.Command("hyprctl", "clients").Output()
-	// slog.Info("hyprctl output", "output", output)
 	if err != nil {
-		slog.Warn("can't get active window with hyprctl; returning nil", "err", err)
+		if debug.Debug {
+			slog.Warn("can't get active window with hyprctl; returning nil", "err", err)
+		}
 		return nil
 	}
 	outputstr := string(output)
@@ -26,11 +28,12 @@ func GetActiveWindows() []string {
 
 	matches := reg.FindAllString(outputstr, -1)
 
-
 	for i, match := range matches {
 		matches[i] = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(match), "class:"))
 	}
 
-	slog.Info("GetActiveWindows", "matches", matches)
+	if debug.Debug {
+		slog.Info("GetActiveWindows", "matches", matches)
+	}
 	return matches
 }
