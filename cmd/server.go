@@ -1,7 +1,13 @@
 package cmd
 
-func RunServer() {
+import (
+	"time"
+	"welldream/src/watchlog"
+)
 
-	println("This is a server")
-
+func RunServer(homeDir string) {
+	for {
+		watchlog.LogCreation(homeDir)
+		time.Sleep(time.Second * 5)
+	}
 }
