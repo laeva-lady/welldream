@@ -36,9 +36,6 @@ func LogCreation(homeDir string) {
 		found := false
 		for i, d := range contents {
 			if d.WindowName == active {
-				if debug.Debug() {
-					slog.Info("active", "active", active, "WindowName", d.WindowName)
-				}
 				contents[i].Time = timeoperations.Add(d.Time, "00:00:01")
 				found = true
 				break

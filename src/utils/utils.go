@@ -19,9 +19,6 @@ func GetDate() string {
 		str = []byte("error")
 	}
 	date := strings.TrimSpace(string(str))
-	if debug.Debug() {
-		slog.Info("date", "date", date)
-	}
 	return date
 }
 
@@ -36,14 +33,7 @@ func ImportData(file string) ([]data.T_data, error) {
 	var contents []data.T_data
 
 	for line := range strings.SplitSeq(string(file_content), "\n") {
-		line_str := string(line)
-		if debug.Debug() {
-			slog.Info("line_str", "line_str", line_str)
-		}
 		parts := strings.Split(string(line), ",")
-		if debug.Debug() {
-			slog.Info("line", "parts", parts)
-		}
 
 		if len(parts) == 2 {
 			contents = append(contents, data.T_data{
