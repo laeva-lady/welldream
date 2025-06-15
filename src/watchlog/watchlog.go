@@ -3,6 +3,7 @@ package watchlog
 import (
 	"log/slog"
 	"os"
+	"slices"
 	"welldream/src/data"
 	"welldream/src/debug"
 	"welldream/src/timeoperations"
@@ -31,6 +32,13 @@ func LogCreation(homeDir string) {
 	}
 
 	activeWindows := windows.GetActiveWindows()
+	slices.Sort(activeWindows)
+
+	// remove duplicates
+	activeWindows = slices.Compact(activeWindows)
+	if debug.Debug() {
+		slog.Info("Sorted active windows and duplicates removed", "windows", activeWindows)
+	}
 
 	for _, active := range activeWindows {
 		found := false
