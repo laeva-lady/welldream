@@ -1,15 +1,20 @@
 package timeoperations
 
-import "time"
+import (
+	"log/slog"
+	"time"
+)
 
 func Add(time1, time2 string) string {
 	// Parse the input times
-	t1, err := time.Parse("+%Y:%m:%d", time1)
+	t1, err := time.Parse("15:04:05", time1)
 	if err != nil {
+		slog.Error("can't parse time", "time1", time1)
 		return "00:00:00"
 	}
-	t2, err := time.Parse("+%Y:%m:%d", time2)
+	t2, err := time.Parse("15:04:05", time2)
 	if err != nil {
+		slog.Error("can't parse time", "time1", time1)
 		return "00:00:00"
 	}
 
@@ -17,5 +22,5 @@ func Add(time1, time2 string) string {
 	result := t1.Add(t2.Sub(time.Time{}))
 
 	// Format the result
-	return result.Format("+%Y:%m:%d")
+	return result.Format("15:04:05")
 }

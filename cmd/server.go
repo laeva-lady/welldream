@@ -8,6 +8,6 @@ import (
 func RunServer(homeDir string) {
 	for {
 		watchlog.LogCreation(homeDir)
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second)
 	}
 }
