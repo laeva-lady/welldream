@@ -1,2 +1,3 @@
 # todo
- - [ ] use a global logger
+ - [ ] add weekly report
+ - [ ] add monthy report
