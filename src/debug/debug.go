@@ -1,5 +1,12 @@
 package debug
 
 var (
-	Debug = true
+	debug = false
 )
+
+func Debug() bool {
+	return debug
+}
+func SetDebug(d bool) {
+	debug = d
+}

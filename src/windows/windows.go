@@ -17,7 +17,7 @@ func GetActiveWindows() []string {
 
 	output, err := exec.Command("hyprctl", "clients").Output()
 	if err != nil {
-		if debug.Debug {
+		if debug.Debug() {
 			slog.Warn("can't get active window with hyprctl; returning nil", "err", err)
 		}
 		return nil
@@ -32,7 +32,7 @@ func GetActiveWindows() []string {
 		matches[i] = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(match), "class:"))
 	}
 
-	if debug.Debug {
+	if debug.Debug() {
 		slog.Info("GetActiveWindows", "matches", matches)
 	}
 	return matches

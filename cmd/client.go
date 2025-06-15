@@ -10,7 +10,9 @@ import (
 )
 
 func RunClient(homedir string) {
-	fmt.Println("Running client")
+	if debug.Debug() {
+		fmt.Println("Running client")
+	}
 	showUsage(homedir)
 }
 
@@ -25,7 +27,7 @@ func showUsage(homedir string) {
 	filename := homedir + "/.cache/wellness/daily/" + date + ".csv"
 	contents, err := utils.ImportData(filename)
 	if err != nil {
-		if debug.Debug {
+		if debug.Debug() {
 			slog.Error("can't read file", "file", filename, "err", err)
 		}
 		return
@@ -36,7 +38,7 @@ func showUsage(homedir string) {
 	for _, d := range contents {
 		time_duration, err := time.Parse("15:04:05", d.Time)
 		if err != nil {
-			if debug.Debug {
+			if debug.Debug() {
 				slog.Error("can't parse time", "time", d.Time, "err", err)
 			}
 			continue
@@ -44,13 +46,18 @@ func showUsage(homedir string) {
 		totalTime = totalTime.Add(time_duration.Sub(time.Time{}))
 	}
 
+	const (
+		lineWidth   = 60
+		columnWidth = 30
+	)
+
 	fmt.Println()
 	fmt.Printf("Today's Screen Usage\t%s\n", totalTime.Format("15:04:05"))
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
-	fmt.Printf("%s%-30s%30s%s\n", yellow, "App", "Time", reset)
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
+	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", lineWidth), reset)
+	fmt.Printf("%s%-*s%*s%s\n", yellow, columnWidth, "App", columnWidth, "Time", reset)
+	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", lineWidth), reset)
 
 	for _, entry := range contents {
-		fmt.Printf("%s%-30s%s%s%30s%s\n", blue, entry.WindowName, reset, green, entry.Time, reset)
+		fmt.Printf("%s%-*s%s%s%*s%s\n", blue, columnWidth, entry.WindowName, reset, green, columnWidth, entry.Time, reset)
 	}
 }
