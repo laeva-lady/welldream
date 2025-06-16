@@ -1,0 +1,13 @@
+[Unit]
+Description=Log and display your app usage
+After=network.target
+
+[Service]
+ExecStart=/absolute/path/to/binary/welldream -d
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
+
