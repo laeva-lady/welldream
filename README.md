@@ -1,7 +1,7 @@
 # Welldream
 Log and display your app usage
 
-![Example usage](img/example_usage.png)
+![Example usage](imgs/example_usage.png)
 
 ## Usage
 - `welldream -d` start the daemon
