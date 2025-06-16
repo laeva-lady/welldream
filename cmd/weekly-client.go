@@ -9,7 +9,7 @@ func RunWeeklyClient(homedir string) {
 	if debug.Debug() {
 		fmt.Println("Running client")
 	}
-	showUsage(homedir)
+	showWeeklyUsage(homedir)
 }
 
 func showWeeklyUsage(homedir string) {
