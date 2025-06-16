@@ -1,4 +1,8 @@
 # Welldream
+
+> [!WARNING]
+> This project only supports Hyprland
+
 Log and display your app usage
 
 ![Example usage](imgs/example_usage.png)
