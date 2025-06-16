@@ -39,10 +39,14 @@ func ImportData(file string) ([]data.T_data, error) {
 	for _, line := range lines {
 		parts := strings.Split(string(line), ",")
 
-		if len(parts) == 2 {
+		if len(parts) == 3 {
+			if debug.Debug() {
+				slog.Info("CSV format;", "line", string(line), "parts", parts)
+			}
 			contents = append(contents, data.T_data{
 				WindowName: parts[0],
 				Time:       parts[1],
+				ActiveTime: parts[2],
 			})
 		}
 	}

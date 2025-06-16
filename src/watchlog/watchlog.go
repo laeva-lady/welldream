@@ -31,29 +31,34 @@ func LogCreation(homeDir string) {
 		}
 	}
 
-	activeWindows := windows.GetActiveWindows()
-	slices.Sort(activeWindows)
+	active := windows.GetActiveWindow()
+	clients := windows.GetClients()
+	slices.Sort(clients)
 
 	// remove duplicates
-	activeWindows = slices.Compact(activeWindows)
+	clients = slices.Compact(clients)
 	if debug.Debug() {
-		slog.Info("Sorted active windows and duplicates removed", "windows", activeWindows)
+		slog.Info("Sorted active windows and duplicates removed", "windows", clients)
 	}
 
-	for _, active := range activeWindows {
+	for _, client := range clients {
 		found := false
 		for i, d := range contents {
-			if d.WindowName == active {
+			if d.WindowName == client {
 				contents[i].Time = timeoperations.Add(d.Time, "00:00:01")
 				found = true
+				if d.WindowName == active {
+					contents[i].ActiveTime = timeoperations.Add(d.ActiveTime, "00:00:01")
+				}
 				break
 			}
 		}
 
 		if !found {
 			contents = append(contents, data.T_data{
-				WindowName: active,
-				Time:       timeoperations.Add(date, "00:00:01"),
+				WindowName: client,
+				Time:       "00:00:00",
+				ActiveTime: "00:00:00",
 			})
 		}
 	}
@@ -72,7 +77,7 @@ func updateCSV(filename string, data []data.T_data) {
 	defer fileHandle.Close()
 
 	for _, d := range data {
-		_, err := fileHandle.WriteString(d.WindowName + "," + d.Time + "\n")
+		_, err := fileHandle.WriteString(d.WindowName + "," + d.Time + "," + d.ActiveTime + "\n")
 		if err != nil {
 			if debug.Debug() {
 				slog.Error("can't write to file", "file", filename, "err", err)
