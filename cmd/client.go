@@ -36,10 +36,10 @@ func showUsage(homedir string) {
 	totalTime := time.Time{}
 
 	for _, d := range contents {
-		time_duration, err := time.Parse("15:04:05", d.Time)
+		time_duration, err := time.Parse("15:04:05", d.ActiveTime)
 		if err != nil {
 			if debug.Debug() {
-				slog.Error("can't parse time", "time", d.Time, "err", err)
+				slog.Error("can't parse time", "time", d.ActiveTime, "err", err)
 			}
 			continue
 		}
@@ -49,7 +49,7 @@ func showUsage(homedir string) {
 	fmt.Println()
 	fmt.Printf("Today's Screen Usage\t%s\n", totalTime.Format("15:04:05"))
 	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
-	fmt.Printf("%s%-30s%15s%15s%s\n", yellow, "App", "Time", "Active Time", reset)
+	fmt.Printf("%s%-30s%15s%15s%s\n", yellow, "App", "App's lifetime", "Active Time", reset)
 	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
 
 	for _, entry := range contents {
