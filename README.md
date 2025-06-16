@@ -1,6 +1,8 @@
 # Welldream
 Log and display your app usage
 
+![Example usage](img/example_usage.png)
+
 ## Usage
 - `welldream -d` start the daemon
 - `welldream` show the usage of the current day
@@ -10,14 +12,14 @@ Log and display your app usage
 ## Cache
 It keeps cache here `~/.cache/welldream`
 
-# Build
+## Build
 Compile the project:
 ```bash
 go build
 ```
 you can then move the `welldream` binary wherever you want
 
-# todo
+## todo
  - [ ] add weekly report
  - [ ] add monthy report
  - [x] add sorting

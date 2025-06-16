@@ -9,14 +9,14 @@ import (
 	"welldream/src/utils"
 )
 
-func RunClient(homedir string) {
+func RunDailyClient(homedir string) {
 	if debug.Debug() {
 		fmt.Println("Running client")
 	}
-	showUsage(homedir)
+	showDailyUsage(homedir)
 }
 
-func showUsage(homedir string) {
+func showDailyUsage(homedir string) {
 	green := "\033[32m"
 	yellow := "\033[33m"
 	red := "\033[31m"

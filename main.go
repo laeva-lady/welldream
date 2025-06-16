@@ -52,7 +52,7 @@ func main() {
 	if debug.Debug() {
 		slog.Info("run client")
 	}
-	cmd.RunClient(homeDir)
+	cmd.RunDailyClient(homeDir)
 }
 
 func printUsage() {
