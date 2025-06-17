@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"slices"
 	"strings"
+	"unicode"
 	"welldream/src/data"
 	"welldream/src/debug"
 )
@@ -51,4 +52,14 @@ func ImportData(file string) ([]data.T_data, error) {
 		}
 	}
 	return contents, nil
+}
+
+func CleanString(s string) string {
+	return strings.Map(func(r rune) rune {
+		// Remove control characters (Unicode category Cc), especially null bytes
+		if unicode.IsControl(r) && r != '\n' && r != '\t' {
+			return -1
+		}
+		return r
+	}, s)
 }

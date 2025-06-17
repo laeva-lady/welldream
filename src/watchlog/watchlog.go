@@ -77,7 +77,8 @@ func updateCSV(filename string, data []data.T_data) {
 	defer fileHandle.Close()
 
 	for _, d := range data {
-		_, err := fileHandle.WriteString(d.WindowName + "," + d.Time + "," + d.ActiveTime + "\n")
+		cleanName := utils.CleanString(d.WindowName)
+		_, err := fileHandle.WriteString(cleanName + "," + d.Time + "," + d.ActiveTime + "\n")
 		if err != nil {
 			if debug.Debug() {
 				slog.Error("can't write to file", "file", filename, "err", err)

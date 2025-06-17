@@ -51,7 +51,7 @@ func showDailyUsage(homedir string) {
 
 	fmt.Println()
 	fmt.Printf("Today's Active Usage\t%s\n", totalActiveTime.Format("15:04:05"))
-	fmt.Printf("Today's Total Usage\t%s\n", totalUsageTime.Format("15:04:05"))
+	fmt.Printf("Today's Total Lifetime\t%s\n", totalUsageTime.Format("15:04:05"))
 	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
 	fmt.Printf("%s%-30s%15s%15s%s\n", yellow, "App", "App's lifetime", "Active Time", reset)
 	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
