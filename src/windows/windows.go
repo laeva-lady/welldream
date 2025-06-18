@@ -48,7 +48,7 @@ func GetClients() []string {
 	}
 	outputstr := string(output)
 
-	reg := regexp.MustCompile(`class:\s*([^\s]+)`)
+	reg := regexp.MustCompile(`class:\s*(.*)`)
 
 	matches := reg.FindAllString(outputstr, -1)
 

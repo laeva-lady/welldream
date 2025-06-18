@@ -34,11 +34,6 @@ func StartSocketLogger(homeDir string) error {
 	date := utils.GetDate()
 	filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
 
-	contents, err := utils.ImportData(filename)
-	if err != nil {
-		contents = []data.T_data{}
-	}
-
 	activeWindow := windows.GetActiveWindow() // default value before socket handles it
 	mu := &sync.Mutex{}
 
@@ -87,6 +82,11 @@ func StartSocketLogger(homeDir string) error {
 	defer ticker.Stop()
 
 	for range ticker.C {
+		contents, err := utils.ImportData(filename)
+		if err != nil {
+			contents = []data.T_data{}
+		}
+
 		clients := windows.GetClients()
 		slices.Sort(clients)
 		clients = slices.Compact(clients)
@@ -107,6 +107,7 @@ func StartSocketLogger(homeDir string) error {
 		}
 
 		for i := range contents {
+			slog.Info("contents", "contents", contents)
 			if slices.Contains(clients, contents[i].WindowName) {
 				contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
 			}
