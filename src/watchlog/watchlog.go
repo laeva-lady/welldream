@@ -2,8 +2,13 @@ package watchlog
 
 import (
 	"log/slog"
+	"net"
 	"os"
+	"regexp"
 	"slices"
+	"strings"
+	"sync"
+	"time"
 	"welldream/src/data"
 	"welldream/src/debug"
 	"welldream/src/timeoperations"
@@ -11,8 +16,108 @@ import (
 	"welldream/src/windows"
 )
 
-func LogCreation(homeDir string) {
+// https://wiki.hypr.land/IPC/
+func getSocket() string {
+	runtimeDir := os.Getenv("XDG_RUNTIME_DIR")
+	hyprInstance := os.Getenv("HYPRLAND_INSTANCE_SIGNATURE")
+	hyprsocket := runtimeDir + "/hypr/" + hyprInstance + "/.socket2.sock"
+	return hyprsocket
+}
+func StartSocketLogger(homeDir string) error {
+	socketPath := getSocket()
+	conn, err := net.Dial("unix", socketPath)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
 
+	reg := regexp.MustCompile(`activewindow>>([^\s]+)`)
+	buf := make([]byte, 4096)
+
+	date := utils.GetDate()
+	filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
+
+	contents, err := utils.ImportData(filename)
+	if err != nil {
+		contents = []data.T_data{}
+	}
+
+	activeWindow := windows.GetActiveWindow() // default value before socket handles it
+	mu := &sync.Mutex{}
+
+	// Start goroutine to listen for socket events
+	go func() {
+		for {
+			n, err := conn.Read(buf)
+			if err != nil {
+				continue // optionally reconnect
+			}
+			output := string(buf[:n])
+			match := reg.FindStringSubmatch(output)
+			if debug.Debug() {
+				slog.Warn("match", "match", match)
+			}
+			if len(match) >= 1 {
+				newActive := strings.TrimPrefix(match[0], "activewindow>>")
+				newActive = strings.Split(newActive, ",")[0]
+				if debug.Debug() {
+					slog.Info("Active window", "newActive", newActive)
+				}
+				mu.Lock()
+				activeWindow = newActive
+				mu.Unlock()
+			} else {
+				// in homescreen???
+				mu.Lock()
+				activeWindow = ""
+				slog.Info("Active window", "homescreen", activeWindow) // active window should be empty
+				mu.Unlock()
+			}
+		}
+	}()
+
+	// Ticker updates every second
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		clients := windows.GetClients()
+		slices.Sort(clients)
+		clients = slices.Compact(clients)
+
+		mu.Lock()
+		current := activeWindow
+		if debug.Debug() {
+			slog.Info("Window", "active", current)
+		}
+		mu.Unlock()
+
+		for i := range contents {
+			if !windows.ContainsWindow(contents, current) && current != "" {
+				contents = append(contents, data.T_data{
+					WindowName: current,
+					Time:       "00:00:00",
+					ActiveTime: "00:00:00",
+				})
+			}
+			contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
+			if current == "" {
+				slog.Info("Loop", "homescreened", current)
+				continue
+			}
+			if contents[i].WindowName == current {
+				if debug.Debug() {
+					slog.Info("Active window", "contents[i].WindowName", contents[i].WindowName, "current", current)
+				}
+				contents[i].ActiveTime = timeoperations.Add(contents[i].ActiveTime, "00:00:01")
+			}
+		}
+		updateCSV(filename, contents)
+	}
+	return nil
+}
+
+func LogCreation(homeDir string) {
 	date := utils.GetDate()
 	filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
 

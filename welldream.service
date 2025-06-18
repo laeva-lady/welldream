@@ -3,7 +3,7 @@ Description=Log and display your app usage
 After=network.target
 
 [Service]
-ExecStart=/absolute/path/to/binary/welldream -d
+ExecStart=/absolute/path/to/binary/welldream --server
 Restart=on-failure
 StandardOutput=journal
 StandardError=journal

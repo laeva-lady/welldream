@@ -8,7 +8,11 @@ Log and display your app usage
 ![Example usage](imgs/example_usage.png)
 
 ## Usage
-- `welldream -d` start the daemon
+- `welldream -s` or `welldream --server` start the server
+  - you can also use the provided systemd service file to start it as a daemon instead
+    (place the welldream.server in `~/.config/systemd/user/`
+    and then run `systemctl --user start welldream.service`
+    or `systemctl --user enable --now welldream.service`(for persistent between boots))
 - `welldream` show the usage of the current day
 
 `--debug` can be used to show debug info
@@ -38,3 +42,4 @@ the binary will be put in `$HOME/.local/bin/`
  - [ ] add monthy report
  - [x] add sorting
  - [ ] change sorting to sort by most used app instead of alphabetically
+ - [ ] IMPORTANT: switch to using Hyprland's IPC instead of polling every second

@@ -6,10 +6,10 @@ import (
 	"os"
 	"welldream/cmd"
 	"welldream/src/debug"
+	"welldream/src/watchlog"
 )
 
 func main() {
-
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		if debug.Debug() {
@@ -17,6 +17,7 @@ func main() {
 		}
 		os.Exit(1)
 	}
+
 	wellnessDir := homeDir + "/.cache/wellness"
 	dailyDataDir := wellnessDir + "/daily"
 
@@ -38,11 +39,15 @@ func main() {
 		}
 	}
 	if len(args) >= 2 {
-		if args[1] == "-d" || args[1] == "--daemon" {
+		if args[1] == "-s" || args[1] == "--server" {
 			if debug.Debug() {
 				slog.Info("run server")
 			}
-			cmd.RunServer(homeDir)
+			err := watchlog.StartSocketLogger(homeDir)
+			// start server which calls "hyprctl" as a subprocess, if it fails to connect to the socket
+			if err != nil {
+				cmd.RunServer(homeDir)
+			}
 		} else if args[1] == "--help" {
 			printUsage()
 			return

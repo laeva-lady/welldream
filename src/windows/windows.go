@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"welldream/pkg/assert"
+	"welldream/src/data"
 	"welldream/src/debug"
 )
 
@@ -59,4 +60,12 @@ func GetClients() []string {
 		slog.Info("clients", "matches", matches)
 	}
 	return matches
+}
+func ContainsWindow(contents []data.T_data, window string) bool {
+	for _, d := range contents {
+		if d.WindowName == window {
+			return true
+		}
+	}
+	return false
 }
