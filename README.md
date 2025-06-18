@@ -15,7 +15,7 @@ Log and display your app usage
 
 - `welldream server` will start the server
 - `welldream server debug` will start the server and debug
-- `welldream server watch debug` will start the server and debug
+- `welldream server watch debug` will start the server, watcher and debug
 - `welldream` will only print the usage
 > `server`, `watch` and `debug` are optional and can be in any order
 

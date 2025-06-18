@@ -68,27 +68,17 @@ func StartSocketLogger(homeDir string) error {
 				activeWindow = newActive
 				mu.Unlock()
 			}
-			if strings.Contains(output, "createworkspace")  {
+			if strings.Contains(output, "createworkspace") {
 				mu.Lock()
 				activeWindow = ""
 				mu.Unlock()
 			}
-			if matchActiveWindow == nil && strings.Contains(output, "focusedmon"){
+			if matchActiveWindow == nil && strings.Contains(output, "focusedmon") {
 				mu.Lock()
 				activeWindow = ""
 				mu.Unlock()
 			}
 			buf = make([]byte, 4096)
-		}
-	}()
-
-	go func() {
-		for {
-			mu.Lock()
-			println(activeWindow)
-			mu.Unlock()
-
-			time.Sleep(1 * time.Second)
 		}
 	}()
 
@@ -108,15 +98,18 @@ func StartSocketLogger(homeDir string) error {
 		}
 		mu.Unlock()
 
+		if !windows.ContainsWindow(contents, current) && current != "" {
+			contents = append(contents, data.T_data{
+				WindowName: current,
+				Time:       "00:00:00",
+				ActiveTime: "00:00:00",
+			})
+		}
+
 		for i := range contents {
-			if !windows.ContainsWindow(contents, current) && current != "" {
-				contents = append(contents, data.T_data{
-					WindowName: current,
-					Time:       "00:00:00",
-					ActiveTime: "00:00:00",
-				})
+			if slices.Contains(clients, contents[i].WindowName) {
+				contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
 			}
-			contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
 			if current == "" {
 				continue
 			}
