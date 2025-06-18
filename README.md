@@ -23,19 +23,14 @@ Log and display your app usage
 It keeps cache here `~/.cache/welldream`
 
 ## Build
-### First option
 Compile the project:
 ```bash
 go build
 ```
 you can then move the `welldream` binary wherever you want
 
-### Second option
-Use the Makefile:
-```
-make
-```
-the binary will be put in `$HOME/.local/bin/`
+## As a Daemon
+you can adapt the available service example file to start the server as a systemd unit
 
 
 
