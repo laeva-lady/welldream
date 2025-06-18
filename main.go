@@ -31,13 +31,12 @@ func main() {
 
 	args := os.Args
 
-	if len(args) >= 3 {
-		if args[2] == "--debug" {
+	for _, arg := range args {
+		if arg == "--debug" {
 			debug.SetDebug(true)
-		} else {
-			fmt.Println("Unknown second argument")
 		}
 	}
+
 	if len(args) >= 2 {
 		if args[1] == "-s" || args[1] == "--server" {
 			if debug.Debug() {
@@ -48,6 +47,8 @@ func main() {
 			if err != nil {
 				cmd.RunServer(homeDir)
 			}
+		} else if args[1] == "--watch" {
+			cmd.DailyWatcher(homeDir)
 		} else if args[1] == "--help" {
 			printUsage()
 			return

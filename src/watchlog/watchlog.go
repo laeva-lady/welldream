@@ -6,7 +6,6 @@ import (
 	"os"
 	"regexp"
 	"slices"
-	"strings"
 	"sync"
 	"time"
 	"welldream/src/data"
@@ -31,9 +30,6 @@ func StartSocketLogger(homeDir string) error {
 	}
 	defer conn.Close()
 
-	reg := regexp.MustCompile(`activewindow>>([^\s]+)`)
-	buf := make([]byte, 4096)
-
 	date := utils.GetDate()
 	filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
 
@@ -46,6 +42,9 @@ func StartSocketLogger(homeDir string) error {
 	mu := &sync.Mutex{}
 
 	// Start goroutine to listen for socket events
+	regActiveWindow := regexp.MustCompile(`^activewindow>>(.*),`)
+	regFocusedMon := regexp.MustCompile(`^focusedmon>>(.*),`)
+	buf := make([]byte, 4096)
 	go func() {
 		for {
 			n, err := conn.Read(buf)
@@ -53,26 +52,36 @@ func StartSocketLogger(homeDir string) error {
 				continue // optionally reconnect
 			}
 			output := string(buf[:n])
-			match := reg.FindStringSubmatch(output)
 			if debug.Debug() {
-				slog.Warn("match", "match", match)
+				slog.Warn("output", "output", output)
 			}
-			if len(match) >= 1 {
-				newActive := strings.TrimPrefix(match[0], "activewindow>>")
-				newActive = strings.Split(newActive, ",")[0]
+			matchActiveWindow := regActiveWindow.FindStringSubmatch(output)
+			matchFocusedMon := regFocusedMon.FindStringSubmatch(output)
+			if debug.Debug() {
+				slog.Warn("match", "match", matchActiveWindow)
+			}
+			if len(matchActiveWindow) >= 2 {
+				newActive := matchActiveWindow[1]
 				if debug.Debug() {
 					slog.Info("Active window", "newActive", newActive)
 				}
 				mu.Lock()
 				activeWindow = newActive
 				mu.Unlock()
-			} else {
-				// in homescreen???
+			}
+			// changing to another monitor doesn't trigger `activewindow`
+			// changing to another workspaces that is empty triggers `activewindow=,`
+			// but changing to another workspaces on another monitor that is empty only triggers triggers `focusedmon=...` and `focusedmonv2=...`
+			if len(matchFocusedMon) >= 2 {
+				newActive := ""
+				if debug.Debug() {
+					slog.Info("Active window", "newActive", newActive)
+				}
 				mu.Lock()
-				activeWindow = ""
-				slog.Info("Active window", "homescreen", activeWindow) // active window should be empty
+				activeWindow = newActive
 				mu.Unlock()
 			}
+			buf = make([]byte, 4096)
 		}
 	}()
 
@@ -102,7 +111,6 @@ func StartSocketLogger(homeDir string) error {
 			}
 			contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
 			if current == "" {
-				slog.Info("Loop", "homescreened", current)
 				continue
 			}
 			if contents[i].WindowName == current {
