@@ -107,7 +107,9 @@ func StartSocketLogger(homeDir string) error {
 		}
 
 		for i := range contents {
-			slog.Info("contents", "contents", contents)
+			if debug.Debug() {
+				slog.Info("contents", "contents", contents)
+			}
 			if slices.Contains(clients, contents[i].WindowName) {
 				contents[i].Time = timeoperations.Add(contents[i].Time, "00:00:01")
 			}
@@ -121,6 +123,7 @@ func StartSocketLogger(homeDir string) error {
 				contents[i].ActiveTime = timeoperations.Add(contents[i].ActiveTime, "00:00:01")
 			}
 		}
+
 		updateCSV(filename, contents)
 	}
 	return nil
@@ -148,7 +151,6 @@ func LogCreation(homeDir string) {
 	active := windows.GetActiveWindow()
 	clients := windows.GetClients()
 	slices.Sort(clients)
-
 	// remove duplicates
 	clients = slices.Compact(clients)
 	if debug.Debug() {
@@ -181,7 +183,7 @@ func LogCreation(homeDir string) {
 }
 
 func updateCSV(filename string, data []data.T_data) {
-	fileHandle, err := os.OpenFile(filename, os.O_RDWR, 0644)
+	fileHandle, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		if debug.Debug() {
 			slog.Warn("stopping updating csv", "can't open file", filename, "err", err)

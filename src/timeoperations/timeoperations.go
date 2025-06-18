@@ -29,3 +29,11 @@ func Add(time1, time2 string) string {
 	// Format the result
 	return result.Format("15:04:05")
 }
+
+func ToInt(timestr string) int {
+	dur, err := time.ParseDuration(timestr)
+	if err != nil {
+		return 0
+	}
+	return int(dur.Seconds())
+}

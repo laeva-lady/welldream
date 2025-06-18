@@ -4,7 +4,6 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
-	"slices"
 	"strings"
 	"unicode"
 	"welldream/src/data"
@@ -35,7 +34,6 @@ func ImportData(file string) ([]data.T_data, error) {
 	var contents []data.T_data
 
 	lines := strings.Split(string(file_content), "\n")
-	slices.Sort(lines)
 
 	for _, line := range lines {
 		parts := strings.Split(string(line), ",")

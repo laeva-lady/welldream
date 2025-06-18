@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log/slog"
+	"sort"
 	"strings"
 	"time"
 	"welldream/src/data"
@@ -36,6 +37,10 @@ func showDailyUsage(homedir string) {
 		}
 		return
 	}
+
+	sort.Slice(contents, func(i, j int) bool {
+		return contents[i].ActiveTime < contents[j].ActiveTime
+	})
 
 	totalActiveTime := time.Time{}
 	totalUsageTime := time.Time{}
