@@ -33,7 +33,10 @@ func RunServer(homeDir string) {
 		fmt.Println("Starting server")
 	}
 	for {
-		watchlog.LogCreation(homeDir)
+		err := watchlog.StartSocketLogger(homeDir)
+		if err != nil {
+			log.Fatal("Could not start socket logger", "err", err)
+		}
 		time.Sleep(time.Second)
 	}
 }

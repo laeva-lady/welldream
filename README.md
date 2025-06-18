@@ -43,5 +43,5 @@ the binary will be put in `$HOME/.local/bin/`
  - [ ] add weekly report
  - [ ] add monthy report
  - [x] add sorting
- - [ ] change sorting to sort by most used app instead of alphabetically
+ - [x] change sorting to sort by most used app instead of alphabetically
  - [x] IMPORTANT: switch to using Hyprland's IPC instead of polling every second

@@ -39,7 +39,7 @@ func showDailyUsage(homedir string) {
 	}
 
 	sort.Slice(contents, func(i, j int) bool {
-		return contents[i].ActiveTime < contents[j].ActiveTime
+		return contents[i].ActiveTime > contents[j].ActiveTime
 	})
 
 	totalActiveTime := time.Time{}
@@ -73,6 +73,11 @@ func DailyWatcher(homedir string) {
 			}
 			return
 		}
+
+		sort.Slice(contents, func(i, j int) bool {
+			return contents[i].ActiveTime > contents[j].ActiveTime
+		})
+
 		totalActiveTime := time.Time{}
 		totalUsageTime := time.Time{}
 

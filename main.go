@@ -7,7 +7,6 @@ import (
 	"sync"
 	"welldream/cmd"
 	"welldream/src/debug"
-	"welldream/src/watchlog"
 )
 
 func main() {
@@ -72,11 +71,7 @@ func main() {
 		waitGroup.Add(1)
 		go func() {
 			defer waitGroup.Done()
-			err := watchlog.StartSocketLogger(homeDir)
-			// start server which calls "hyprctl" as a subprocess, if it fails to connect to the socket
-			if err != nil {
-				cmd.RunServer(homeDir)
-			}
+			cmd.RunServer(homeDir)
 		}()
 	}
 
