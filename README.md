@@ -8,15 +8,16 @@ Log and display your app usage
 ![Example usage](imgs/example_usage.png)
 
 ## Usage
-- `welldream -s` or `welldream --server` start the server
-  - you can also use the provided systemd service file to start it as a daemon instead
-    (place the welldream.server in `~/.config/systemd/user/`
-    and then run `systemctl --user start welldream.service`
-    or `systemctl --user enable --now welldream.service`(for persistence between boots))
-- `welldream` show the usage of the current day
-- `welldream --watch` watches the usage of the current day
+- add `server` to start the server
+- add `watch` to start watching
+- add `debug` to print debug info
+- nothing print the usage then exists
 
-`--debug` can be used to show debug info
+- `welldream server` will start the server
+- `welldream server debug` will start the server and debug
+- `welldream server watch debug` will start the server and debug
+- `welldream` will only print the usage
+> `server`, `watch` and `debug` are optional and can be in any order
 
 ## Cache
 It keeps cache here `~/.cache/welldream`
