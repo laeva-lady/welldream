@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 	"welldream/src/data"
@@ -42,8 +43,7 @@ func StartSocketLogger(homeDir string) error {
 	mu := &sync.Mutex{}
 
 	// Start goroutine to listen for socket events
-	regActiveWindow := regexp.MustCompile(`^activewindow>>(.*),`)
-	regFocusedMon := regexp.MustCompile(`^focusedmon>>(.*),`)
+	reg := regexp.MustCompile(`^activewindow>>(.*),`)
 	buf := make([]byte, 4096)
 	go func() {
 		for {
@@ -55,8 +55,7 @@ func StartSocketLogger(homeDir string) error {
 			if debug.Debug() {
 				slog.Warn("output", "output", output)
 			}
-			matchActiveWindow := regActiveWindow.FindStringSubmatch(output)
-			matchFocusedMon := regFocusedMon.FindStringSubmatch(output)
+			matchActiveWindow := reg.FindStringSubmatch(output)
 			if debug.Debug() {
 				slog.Warn("match", "match", matchActiveWindow)
 			}
@@ -69,19 +68,27 @@ func StartSocketLogger(homeDir string) error {
 				activeWindow = newActive
 				mu.Unlock()
 			}
-			// changing to another monitor doesn't trigger `activewindow`
-			// changing to another workspaces that is empty triggers `activewindow=,`
-			// but changing to another workspaces on another monitor that is empty only triggers triggers `focusedmon=...` and `focusedmonv2=...`
-			if len(matchFocusedMon) >= 2 {
-				newActive := ""
-				if debug.Debug() {
-					slog.Info("Active window", "newActive", newActive)
-				}
+			if strings.Contains(output, "createworkspace")  {
 				mu.Lock()
-				activeWindow = newActive
+				activeWindow = ""
+				mu.Unlock()
+			}
+			if matchActiveWindow == nil && strings.Contains(output, "focusedmon"){
+				mu.Lock()
+				activeWindow = ""
 				mu.Unlock()
 			}
 			buf = make([]byte, 4096)
+		}
+	}()
+
+	go func() {
+		for {
+			mu.Lock()
+			println(activeWindow)
+			mu.Unlock()
+
+			time.Sleep(1 * time.Second)
 		}
 	}()
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"sync"
 	"welldream/cmd"
 	"welldream/src/debug"
 	"welldream/src/watchlog"
@@ -31,34 +32,62 @@ func main() {
 
 	args := os.Args
 
-	for _, arg := range args {
-		if arg == "--debug" {
-			debug.SetDebug(true)
-		}
+	startServer := false
+	startWatcher := false
+
+	if len(args) >= 2 && args[1] == "--help" {
+		printUsage()
+		return
 	}
 
-	if len(args) >= 2 {
-		if args[1] == "-s" || args[1] == "--server" {
-			if debug.Debug() {
-				slog.Info("run server")
-			}
+	for _, arg := range args {
+		if arg == "debug" {
+			println("debug")
+			debug.SetDebug(true)
+		}
+		if arg == "watch" {
+			println("watch")
+			startWatcher = true
+		}
+		if arg == "server" {
+			println("server")
+			startServer = true
+		}
+	}
+	var waitGroup sync.WaitGroup
+	if startWatcher {
+		if debug.Debug() {
+			slog.Info("run watch")
+		}
+		waitGroup.Add(1)
+		go func() {
+			defer waitGroup.Done()
+			cmd.DailyWatcher(homeDir)
+		}()
+	}
+	if startServer {
+		if debug.Debug() {
+			slog.Info("run server")
+		}
+		waitGroup.Add(1)
+		go func() {
+			defer waitGroup.Done()
 			err := watchlog.StartSocketLogger(homeDir)
 			// start server which calls "hyprctl" as a subprocess, if it fails to connect to the socket
 			if err != nil {
 				cmd.RunServer(homeDir)
 			}
-		} else if args[1] == "--watch" {
-			cmd.DailyWatcher(homeDir)
-		} else if args[1] == "--help" {
-			printUsage()
-			return
-		}
+		}()
 	}
 
-	if debug.Debug() {
-		slog.Info("run client")
+	if startServer || startWatcher {
+		waitGroup.Wait()
+	} else {
+		if debug.Debug() {
+			slog.Info("run client")
+		}
+		// cmd.RunDailyClient(homeDir)
 	}
-	cmd.RunDailyClient(homeDir)
 }
 
 func printUsage() {

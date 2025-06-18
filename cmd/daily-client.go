@@ -95,10 +95,10 @@ func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_dat
 	fmt.Println()
 	fmt.Printf("Today's Active Usage\t%s\n", totalActiveTime.Format("15:04:05"))
 	fmt.Printf("Today's Total Lifetime\t%s\n", totalUsageTime.Format("15:04:05"))
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
-	fmt.Printf("%s%-30s%15s%15s%s\n", yellow, "App", "App's lifetime", "Active Time", reset)
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 60), reset)
+	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 80), reset)
+	fmt.Printf("%s%-30s%20s%30s%s\n", yellow, "Clients", "Clients' lifetime", "Clients' Active Time", reset)
+	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 80), reset)
 	for _, entry := range contents {
-		fmt.Printf("%s%-30s%s%s%15s%s%s%15s%s\n", blue, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, reset)
+		fmt.Printf("%s%-30s%s%s%20s%s%s%30s%s\n", blue, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, reset)
 	}
 }
