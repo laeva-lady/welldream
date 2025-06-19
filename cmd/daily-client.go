@@ -103,12 +103,14 @@ func DailyWatcher(homedir string) {
 func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_data) {
 	fmt.Printf("\033[H\033[2J")
 	fmt.Println()
-	fmt.Printf("Today's Active Usage\t%s\n", totalActiveTime.Format("15:04:05"))
-	fmt.Printf("Today's Total Lifetime\t%s\n", totalUsageTime.Format("15:04:05"))
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 80), reset)
-	fmt.Printf("%s%-30s%20s%30s%s\n", yellow, "Clients", "Clients' lifetime", "Clients' Active Time", reset)
-	fmt.Printf("%s%s%s\n", red, strings.Repeat("-", 80), reset)
+	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
+	fmt.Printf("%s|%sToday's Active Usage\t%-57s%s|%s\n", red, reset, totalActiveTime.Format("15:04:05"), red, reset)
+	fmt.Printf("%s|%sToday's Total Lifetime\t%-57s%s|%s\n", red, reset, totalUsageTime.Format("15:04:05"), red, reset)
+	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
+	fmt.Printf("%s|%s%-30s%20s%30s%s|%s\n", red, yellow, "Clients", "Clients' lifetime", "Clients' Active Time", red, reset)
+	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 	for _, entry := range contents {
-		fmt.Printf("%s%-30s%s%s%20s%s%s%30s%s\n", blue, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, reset)
+		fmt.Printf("%s|%s%-30s%s%s%20s%s%s%30s%s|%s\n", red, blue, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, red, reset)
 	}
+	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 }
