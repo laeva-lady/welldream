@@ -40,3 +40,4 @@ you can adapt the available service example file to start the server as a system
  - [x] add sorting
  - [x] change sorting to sort by most used app instead of alphabetically
  - [x] IMPORTANT: switch to using Hyprland's IPC instead of polling every second
+ - [ ] add web front end

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +13,7 @@ import (
 
 func RunServer(homeDir string) {
 	lockfile := "/tmp/welldream.lock"
-	_, err := os.OpenFile(lockfile, os.O_CREATE|os.O_EXCL, 0644)
+	_, err := os.OpenFile(lockfile, os.O_CREATE, 0644)
 	if err != nil {
 		log.Fatal("Server already running")
 	}
@@ -30,7 +30,7 @@ func RunServer(homeDir string) {
 	}()
 
 	if debug.Debug() {
-		fmt.Println("Starting server")
+		slog.Info("starting server")
 	}
 	for {
 		err := watchlog.StartSocketLogger(homeDir)
