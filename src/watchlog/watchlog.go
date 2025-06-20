@@ -31,11 +31,6 @@ func StartSocketLogger(homeDir string) error {
 	}
 	defer conn.Close()
 
-	date := utils.GetDate()
-	filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
-	// ensures the file exists
-	_, err = os.OpenFile(filename, os.O_CREATE|os.O_EXCL, 0644)
-
 	activeWindow := windows.GetActiveWindow() // default value before socket handles it
 	mu := &sync.Mutex{}
 
@@ -58,11 +53,12 @@ func StartSocketLogger(homeDir string) error {
 			}
 			if len(matchActiveWindow) >= 2 {
 				newActive := matchActiveWindow[1]
+				newActives := strings.Split(newActive, ",")
 				if debug.Debug() {
 					slog.Info("Active window", "newActive", newActive)
 				}
 				mu.Lock()
-				activeWindow = newActive
+				activeWindow = newActives[0]
 				mu.Unlock()
 			}
 			if strings.Contains(output, "createworkspace") {
@@ -84,6 +80,10 @@ func StartSocketLogger(homeDir string) error {
 	defer ticker.Stop()
 
 	for range ticker.C {
+		date := utils.GetDate()
+		filename := homeDir + "/.cache/wellness/daily/" + date + ".csv"
+		// ensures the file exists
+		_, err = os.OpenFile(filename, os.O_CREATE|os.O_EXCL, 0644)
 		contents, err := utils.ImportData(filename)
 		if err != nil {
 			contents = []data.T_data{}
