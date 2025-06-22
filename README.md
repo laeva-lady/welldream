@@ -20,7 +20,7 @@ Log and display your app usage
 > `server`, `watch` and `debug` are optional and can be in any order
 
 ## Cache
-It keeps cache here `~/.cache/welldream`
+It keeps cache here `~/.cache/wellness`
 
 ## Build
 Compile the project:
