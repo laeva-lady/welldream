@@ -31,21 +31,8 @@ func showDailyUsage(homedir string) {
 
 	date := utils.GetDate()
 	filename := homedir + "/.cache/wellness/daily/" + date + ".csv"
-	contents, err := utils.ImportData(filename)
-	if err != nil {
-		if debug.Debug() {
-			slog.Error("can't read file", "file", filename, "err", err)
-		}
-		return
-	}
 
-	sort.Slice(contents, func(i, j int) bool {
-		return contents[i].ActiveTime > contents[j].ActiveTime
-	})
-
-	totalActiveTime, totalUsageTime := timeoperations.AddTotalTimes(contents)
-
-	printUsage(totalActiveTime, totalUsageTime, contents)
+	run(filename)
 }
 
 func DailyWatcher(homedir string) {
@@ -53,24 +40,24 @@ func DailyWatcher(homedir string) {
 	filename := homedir + "/.cache/wellness/daily/" + date + ".csv"
 
 	for {
-		contents, err := utils.ImportData(filename)
-		if err != nil {
-			if debug.Debug() {
-				slog.Error("can't read file", "file", filename, "err", err)
-			}
-			return
-		}
-
-		sort.Slice(contents, func(i, j int) bool {
-			return contents[i].ActiveTime > contents[j].ActiveTime
-		})
-
-		totalActiveTime, totalUsageTime := timeoperations.AddTotalTimes(contents)
-
-		printUsage(totalActiveTime, totalUsageTime, contents)
-
+		run(filename)
 		time.Sleep(1 * time.Second)
 	}
+}
+
+func run(filename string) {
+	contents, err := utils.ImportData(filename)
+	if err != nil {
+		if debug.Debug() {
+			slog.Error("can't read file", "file", filename, "err", err)
+		}
+		return
+	}
+	sort.Slice(contents, func(i, j int) bool {
+		return contents[i].ActiveTime > contents[j].ActiveTime
+	})
+	totalActiveTime, totalUsageTime := timeoperations.AddTotalTimes(contents)
+	printUsage(totalActiveTime, totalUsageTime, contents)
 }
 
 func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_data) {
