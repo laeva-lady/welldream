@@ -8,6 +8,7 @@ import (
 	"time"
 	"welldream/src/data"
 	"welldream/src/debug"
+	"welldream/src/timeoperations"
 	"welldream/src/utils"
 )
 
@@ -42,21 +43,7 @@ func showDailyUsage(homedir string) {
 		return contents[i].ActiveTime > contents[j].ActiveTime
 	})
 
-	totalActiveTime := time.Time{}
-	totalUsageTime := time.Time{}
-
-	for _, d := range contents {
-		active_time_duration, err := time.Parse("15:04:05", d.ActiveTime)
-		usage_time_duration, err := time.Parse("15:04:05", d.Time)
-		if err != nil {
-			if debug.Debug() {
-				slog.Error("can't parse time", "time", d.ActiveTime, "err", err)
-			}
-			continue
-		}
-		totalActiveTime = totalActiveTime.Add(active_time_duration.Sub(time.Time{}))
-		totalUsageTime = totalUsageTime.Add(usage_time_duration.Sub(time.Time{}))
-	}
+	totalActiveTime, totalUsageTime := timeoperations.AddTotalTimes(contents)
 
 	printUsage(totalActiveTime, totalUsageTime, contents)
 }
@@ -78,21 +65,7 @@ func DailyWatcher(homedir string) {
 			return contents[i].ActiveTime > contents[j].ActiveTime
 		})
 
-		totalActiveTime := time.Time{}
-		totalUsageTime := time.Time{}
-
-		for _, d := range contents {
-			active_time_duration, err := time.Parse("15:04:05", d.ActiveTime)
-			usage_time_duration, err := time.Parse("15:04:05", d.Time)
-			if err != nil {
-				if debug.Debug() {
-					slog.Error("can't parse time", "time", d.ActiveTime, "err", err)
-				}
-				continue
-			}
-			totalActiveTime = totalActiveTime.Add(active_time_duration.Sub(time.Time{}))
-			totalUsageTime = totalUsageTime.Add(usage_time_duration.Sub(time.Time{}))
-		}
+		totalActiveTime, totalUsageTime := timeoperations.AddTotalTimes(contents)
 
 		printUsage(totalActiveTime, totalUsageTime, contents)
 
@@ -101,11 +74,11 @@ func DailyWatcher(homedir string) {
 }
 
 func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_data) {
-	fmt.Printf("\033[H\033[2J")
+	// fmt.Printf("\033[H\033[2J")
 	fmt.Println()
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
-	fmt.Printf("%s|%sToday's Active Usage\t%-57s%s|%s\n", red, reset, totalActiveTime.Format("15:04:05"), red, reset)
-	fmt.Printf("%s|%sToday's Total Lifetime\t%-57s%s|%s\n", red, reset, totalUsageTime.Format("15:04:05"), red, reset)
+	fmt.Printf("%s|%sToday's Active Usage\t%-57s%s|%s\n", red, reset, totalActiveTime.Sub(time.Time{}), red, reset)
+	fmt.Printf("%s|%sToday's Total Lifetime\t%-57s%s|%s\n", red, reset, totalUsageTime.Sub(time.Time{}), red, reset)
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 	fmt.Printf("%s|%s%-30s%20s%30s%s|%s\n", red, yellow, "Clients", "Clients' lifetime", "Clients' Active Time", red, reset)
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
