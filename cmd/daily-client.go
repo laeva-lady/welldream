@@ -15,6 +15,7 @@ import (
 const (
 	blue   = "\033[34m"
 	green  = "\033[32m"
+	purple = "\033[0;95m"
 	red    = "\033[31m"
 	reset  = "\033[0m"
 	yellow = "\033[33m"
@@ -28,17 +29,14 @@ func RunDailyClient(homedir string) {
 }
 
 func showDailyUsage(homedir string) {
-
 	date := utils.GetDate()
 	filename := homedir + "/.cache/wellness/daily/" + date + ".csv"
-
 	run(filename)
 }
 
 func DailyWatcher(homedir string) {
 	date := utils.GetDate()
 	filename := homedir + "/.cache/wellness/daily/" + date + ".csv"
-
 	for {
 		run(filename)
 		time.Sleep(1 * time.Second)
@@ -61,8 +59,18 @@ func run(filename string) {
 }
 
 func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_data) {
-	// fmt.Printf("\033[H\033[2J")
+	fmt.Printf("\033[H\033[2J")
 	fmt.Println()
+	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
+
+	word := "Fpyness"
+	stringLength := 80
+	spaces := stringLength - len(word)
+	padLeft := spaces/2 + len(word)
+	word = fmt.Sprintf("%*s", padLeft, word)
+	word = fmt.Sprintf("%-*s", stringLength, word)
+	fmt.Printf("%s|%s%s%s|%s\n", red, yellow, word, red, reset)
+
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 	fmt.Printf("%s|%sToday's Active Usage\t%-57s%s|%s\n", red, reset, totalActiveTime.Sub(time.Time{}), red, reset)
 	fmt.Printf("%s|%sToday's Total Lifetime\t%-57s%s|%s\n", red, reset, totalUsageTime.Sub(time.Time{}), red, reset)
@@ -70,7 +78,13 @@ func printUsage(totalActiveTime, totalUsageTime time.Time, contents []data.T_dat
 	fmt.Printf("%s|%s%-30s%20s%30s%s|%s\n", red, yellow, "Clients", "Clients' lifetime", "Clients' Active Time", red, reset)
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 	for _, entry := range contents {
-		fmt.Printf("%s|%s%-30s%s%s%20s%s%s%30s%s|%s\n", red, blue, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, red, reset)
+		var activeColor string
+		if entry.Active {
+			activeColor = purple
+		} else {
+			activeColor = blue
+		}
+		fmt.Printf("%s|%s%-30s%s%s%20s%s%s%30s%s|%s\n", red, activeColor, entry.WindowName, reset, green, entry.Time, reset, green, entry.ActiveTime, red, reset)
 	}
 	fmt.Printf("%s|%s|%s\n", red, strings.Repeat("-", 80), reset)
 }

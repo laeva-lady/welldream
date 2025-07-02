@@ -11,7 +11,7 @@ Log and display your app usage
 - add `server` to start the server
 - add `watch` to start watching
 - add `debug` to print debug info
-- nothing print the usage then exists
+- nothing print the usage then exits
 
 - `welldream server` will start the server
 - `welldream server debug` will start the server and debug

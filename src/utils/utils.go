@@ -33,19 +33,25 @@ func ImportData(file string) ([]data.T_data, error) {
 	}
 	var contents []data.T_data
 
-	lines := strings.Split(string(file_content), "\n")
+	lines := strings.SplitSeq(string(file_content), "\n")
 
-	for _, line := range lines {
+	for line := range lines {
 		parts := strings.Split(string(line), ",")
 
-		if len(parts) == 3 {
+		if len(parts) == 4 {
 			if debug.Debug() {
 				slog.Info("CSV format;", "line", string(line), "parts", parts)
 			}
+			isActive := false
+			if parts[3] == "active" {
+				isActive = true
+			}
+
 			contents = append(contents, data.T_data{
 				WindowName: parts[0],
 				Time:       parts[1],
 				ActiveTime: parts[2],
+				Active:     isActive,
 			})
 		}
 	}

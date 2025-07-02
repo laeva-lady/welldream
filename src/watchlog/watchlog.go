@@ -105,6 +105,7 @@ func StartSocketLogger(homeDir string) error {
 				WindowName: current,
 				Time:       "00:00:00",
 				ActiveTime: "00:00:00",
+				Active:     false,
 			})
 		}
 
@@ -123,6 +124,9 @@ func StartSocketLogger(homeDir string) error {
 					slog.Info("Active window", "contents[i].WindowName", contents[i].WindowName, "current", current)
 				}
 				contents[i].ActiveTime = timeoperations.Add(contents[i].ActiveTime, "00:00:01")
+				contents[i].Active = true;
+			} else {
+				contents[i].Active = false;
 			}
 		}
 
@@ -143,7 +147,13 @@ func updateCSV(filename string, data []data.T_data) {
 
 	for _, d := range data {
 		cleanName := utils.CleanString(d.WindowName)
-		_, err := fileHandle.WriteString(cleanName + "," + d.Time + "," + d.ActiveTime + "\n")
+		var activeStr string
+		if d.Active {
+			activeStr = "active"
+		} else {
+			activeStr = ""
+		}
+		_, err := fileHandle.WriteString(cleanName + "," + d.Time + "," + d.ActiveTime + "," + activeStr + "\n")
 		if err != nil {
 			if debug.Debug() {
 				slog.Error("can't write to file", "file", filename, "err", err)
